@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./App.css";
+import "./App.css"; // Import CSS file for styling
 
 const customDictionary = {
   teh: "the",
@@ -8,40 +8,44 @@ const customDictionary = {
   exampl: "example",
 };
 
-function App() {
-  const [text, setText] = useState("");
-  const [suggestedText, setSuggestedText] = useState("");
+const SpellCheck = () => {
+  const [inputText, setInputText] = useState("");
+  const [correction, setCorrection] = useState("");
 
-  const handleChange = (e) => {
-    setText(e.target.value);
-
-    const words = text.split(" ");
-    const correctedWords = words.map((word) => {
-      const correctedWord = customDictionary[word.toLocaleLowerCase()];
-      return correctedWord || word;
-    });
-
-    const firstCorrection = correctedWords.find(
-      (word, idx) => word !== words[idx]
-    );
-    setSuggestedText(firstCorrection || "");
+  const handleInputChange = (e) => {
+    const inputValue = e.target.value.toLowerCase();
+    setInputText(inputValue);
+    setCorrection("");
+    const words = inputValue.split(" ");
+    for (let word of words) {
+      if (customDictionary[word]) {
+        setCorrection(customDictionary[word]);
+        break;
+      }
+    }
   };
+
   return (
-    <div>
+    <div className="center">
+      <h1>Spell Check and Auto-Correction</h1>
       <textarea
-        value={text}
-        rows={5}
-        cols={40}
-        onChange={handleChange}
+        rows="4"
+        cols="50"
+        value={inputText}
+        onChange={handleInputChange}
         placeholder="Enter text..."
       ></textarea>
-      {suggestedText && (
-        <p>
-          Did you mean: <strong>{suggestedText}</strong>?
+      {correction && (
+        <p className="correction">
+          Did you mean:{" "}
+          <strong>
+            {correction.charAt(0).toLowerCase() + correction.slice(1)}
+          </strong>
+          ?
         </p>
       )}
     </div>
   );
-}
+};
 
-export default App;
+export default SpellCheck;
